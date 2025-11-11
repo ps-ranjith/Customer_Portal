@@ -1,0 +1,144 @@
+<div class="inquiry-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="icon fas fa-clipboard-list"></i>
+        Inquiry Data
+      </h1>
+      <p class="page-subtitle">View and manage your inquiry information</p>
+    </div>
+    <div class="header-actions">
+      <button 
+        class="refresh-btn" 
+        (click)="refreshData()" 
+        [disabled]="isLoading">
+        <i class="refresh-icon fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
+        {{ isLoading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+    <p class="loading-text">Loading inquiry data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !isLoading">
+    <div class="error-card">
+      <i class="error-icon fas fa-exclamation-triangle"></i>
+      <h3 class="error-title">Error Loading Data</h3>
+      <p class="error-message">{{ error }}</p>
+      <button class="retry-btn" (click)="refreshData()">
+        <i class="retry-icon fas fa-redo"></i>
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Section -->
+  <div class="data-section" *ngIf="!isLoading && !error">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card total-orders dashboard-card">
+        <i class="card-icon fas fa-boxes"></i>
+        <div class="card-content">
+          <h3 class="card-title">Total Orders</h3>
+          <p class="card-value">{{ inquiryData.length }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card total-value dashboard-card">
+        <i class="card-icon fas fa-dollar-sign"></i>
+        <div class="card-content">
+          <h3 class="card-title">Total Value</h3>
+          <p class="card-value">{{ getTotalValue() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card avg-value dashboard-card">
+        <i class="card-icon fas fa-chart-bar"></i>
+        <div class="card-content">
+          <h3 class="card-title">Average Order</h3>
+          <p class="card-value">{{ getAverageValue() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container table-card">
+      <div class="table-header">
+        <h2 class="table-title">Inquiry Details</h2>
+        <div class="table-actions">
+          <span class="record-count">{{ inquiryData.length }} records</span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="th-order">Order #</th>
+              <th class="th-date">Date</th>
+              <th class="th-product">Product</th>
+              <th class="th-quantity">Quantity</th>
+              <th class="th-unit">Unit</th>
+              <th class="th-amount">Amount</th>
+              <th class="th-status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr 
+              *ngFor="let item of inquiryData; let i = index" 
+              class="table-row data-card">
+              
+              <td class="td-order" data-label="Order #">
+                <span class="order-number">{{ item.VBELN }}</span>
+              </td>
+              
+              <td class="td-date" data-label="Date">
+                <span class="date-value">{{ formatDate(item.ERDAT) }}</span>
+              </td>
+              
+              <td class="td-product" data-label="Product">
+                <div class="product-info">
+                  <span class="product-name">{{ item.ARKTX }}</span>
+                  <span class="product-code">{{ item.MATNR }}</span>
+                </div>
+              </td>
+              
+              <td class="td-quantity" data-label="Quantity">
+                <span class="quantity-value">{{ item.KWMENG }}</span>
+              </td>
+              
+              <td class="td-unit" data-label="Unit">
+                <span class="unit-value">{{ item.VRKME }}</span>
+              </td>
+              
+              <td class="td-amount" data-label="Amount">
+                <span class="amount-value">{{ formatCurrency(item.NETWR, item.WAERK) }}</span>
+              </td>
+              
+              <td class="td-status" data-label="Status">
+                <span class="status-badge" [ngClass]="getStatusClass(item.VBELN)">
+                  {{ getStatusText(item.VBELN) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="inquiryData.length === 0">
+        <i class="empty-icon fas fa-inbox"></i>
+        <h3 class="empty-title">No Inquiry Data</h3>
+        <p class="empty-message">No inquiry records found. Check back later for updates.</p>
+      </div>
+    </div>
+  </div>
+</div>

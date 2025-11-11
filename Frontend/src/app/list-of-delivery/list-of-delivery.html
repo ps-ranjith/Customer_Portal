@@ -1,0 +1,168 @@
+<div class="list-of-delivery-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="icon fas fa-truck"></i>
+        List of Deliveries
+      </h1>
+      <p class="page-subtitle">View and track your delivery information</p>
+    </div>
+    <div class="header-actions">
+      <button 
+        class="refresh-btn" 
+        (click)="refreshData()" 
+        [disabled]="isLoading">
+        <i class="refresh-icon fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
+        {{ isLoading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+    <p class="loading-text">Loading delivery data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !isLoading">
+    <div class="error-card">
+      <i class="error-icon fas fa-exclamation-triangle"></i>
+      <h3 class="error-title">Error Loading Data</h3>
+      <p class="error-message">{{ error }}</p>
+      <button class="retry-btn" (click)="refreshData()">
+        <i class="retry-icon fas fa-redo"></i>
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Section -->
+  <div class="data-section" *ngIf="!isLoading && !error">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card total-deliveries">
+        <i class="card-icon fas fa-boxes"></i>
+        <div class="card-content">
+          <h3 class="card-title">Total Deliveries</h3>
+          <p class="card-value">{{ getTotalDeliveries() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card unique-customers">
+        <i class="card-icon fas fa-users"></i>
+        <div class="card-content">
+          <h3 class="card-title">Unique Customers</h3>
+          <p class="card-value">{{ getUniqueCustomers() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card unique-products">
+        <i class="card-icon fas fa-tags"></i>
+        <div class="card-content">
+          <h3 class="card-title">Unique Products</h3>
+          <p class="card-value">{{ getUniqueProducts() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card pending-deliveries">
+        <i class="card-icon fas fa-clock"></i>
+        <div class="card-content">
+          <h3 class="card-title">Pending Deliveries</h3>
+          <p class="card-value">{{ getPendingDeliveries() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+      <div class="table-header">
+        <h2 class="table-title">Delivery Details</h2>
+        <div class="table-actions">
+          <span class="record-count">{{ deliveryData.length }} records</span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="th-delivery-number">Delivery Number</th>
+              <th class="th-creation-date">Creation Date</th>
+              <th class="th-shipping-point">Shipping Point</th>
+              <th class="th-customer">Customer</th>
+              <th class="th-product">Product</th>
+              <th class="th-product-name">Product Name</th>
+              <th class="th-unit">Unit</th>
+              <th class="th-position">Position</th>
+              <th class="th-actual-date">Actual Date</th>
+              <th class="th-status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr 
+              *ngFor="let item of deliveryData; let i = index" 
+              class="table-row">
+              
+              <td class="td-delivery-number">
+                <span class="delivery-number">{{ item.VBELN }}</span>
+              </td>
+              
+              <td class="td-creation-date">
+                <span class="creation-date">{{ formatDate(item.ERDAT) }}</span>
+              </td>
+              
+              <td class="td-shipping-point">
+                <span class="shipping-point">{{ item.VSTEL }}</span>
+              </td>
+              
+              <td class="td-customer">
+                <div class="customer-info">
+                  <span class="customer-id">{{ formatCustomerId(item.KUNNR) }}</span>
+                </div>
+              </td>
+              
+              <td class="td-product">
+                <div class="product-info">
+                  <span class="product-id">{{ formatProductId(item.MATNR) }}</span>
+                </div>
+              </td>
+              
+              <td class="td-product-name">
+                <span class="product-name">{{ item.ARKTX }}</span>
+              </td>
+              
+              <td class="td-unit">
+                <span class="unit-value">{{ item.VRKME }}</span>
+              </td>
+              
+              <td class="td-position">
+                <span class="position-value">{{ item.POSNR }}</span>
+              </td>
+              
+              <td class="td-actual-date">
+                <span class="actual-date">{{ formatDate(item.WADAT_IST) }}</span>
+              </td>
+              
+              <td class="td-status">
+                <span class="status-badge" [ngClass]="getStatusClass(item.WADAT_IST)">
+                  {{ getStatusText(item.WADAT_IST) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="deliveryData.length === 0">
+        <i class="empty-icon fas fa-inbox"></i>
+        <h3 class="empty-title">No Delivery Data</h3>
+        <p class="empty-message">No delivery records found. Check back later for updates.</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,157 @@
+<div class="sales-order-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="icon fas fa-file-invoice"></i>
+        Sales Orders
+      </h1>
+      <p class="page-subtitle">View and manage your sales order information</p>
+    </div>
+    <div class="header-actions">
+      <button 
+        class="refresh-btn" 
+        (click)="refreshData()" 
+        [disabled]="isLoading">
+        <i class="refresh-icon fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
+        {{ isLoading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+    <p class="loading-text">Loading sales order data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !isLoading">
+    <div class="error-card">
+      <i class="error-icon fas fa-exclamation-triangle"></i>
+      <h3 class="error-title">Error Loading Data</h3>
+      <p class="error-message">{{ error }}</p>
+      <button class="retry-btn" (click)="refreshData()">
+        <i class="retry-icon fas fa-redo"></i>
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Section -->
+  <div class="data-section" *ngIf="!isLoading && !error">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card total-orders">
+        <i class="card-icon fas fa-boxes"></i>
+        <div class="card-content">
+          <h3 class="card-title">Total Orders</h3>
+          <p class="card-value">{{ getTotalOrders() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card unique-customers">
+        <i class="card-icon fas fa-users"></i>
+        <div class="card-content">
+          <h3 class="card-title">Unique Customers</h3>
+          <p class="card-value">{{ getUniqueCustomers() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card unique-products">
+        <i class="card-icon fas fa-tags"></i>
+        <div class="card-content">
+          <h3 class="card-title">Unique Products</h3>
+          <p class="card-value">{{ getUniqueProducts() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+      <div class="table-header">
+        <h2 class="table-title">Sales Order Details</h2>
+        <div class="table-actions">
+          <span class="record-count">{{ salesOrderData.length }} records</span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="th-order-type">Order Type</th>
+              <th class="th-sales-org">Sales Org</th>
+              <th class="th-customer">Customer</th>
+              <th class="th-product">Product</th>
+              <th class="th-item-category">Item Category</th>
+              <th class="th-division">Division</th>
+              <th class="th-dist-channel">Distribution</th>
+              <th class="th-position">Position</th>
+              <th class="th-status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr 
+              *ngFor="let item of salesOrderData; let i = index" 
+              class="table-row">
+              
+              <td class="td-order-type">
+                <span class="order-type-badge" [ngClass]="getOrderTypeClass(item.AUART)">
+                  {{ getOrderTypeText(item.AUART) }}
+                </span>
+              </td>
+              
+              <td class="td-sales-org">
+                <span class="sales-org-value">{{ item.VKORG }}</span>
+              </td>
+              
+              <td class="td-customer">
+                <div class="customer-info">
+                  <span class="customer-id">{{ formatCustomerId(item.KUNNR) }}</span>
+                </div>
+              </td>
+              
+              <td class="td-product">
+                <div class="product-info">
+                  <span class="product-id">{{ formatProductId(item.MATNR) }}</span>
+                </div>
+              </td>
+              
+              <td class="td-item-category">
+                <span class="item-category-value">{{ item.PSTYV }}</span>
+              </td>
+              
+              <td class="td-division">
+                <span class="division-value">{{ item.SPART }}</span>
+              </td>
+              
+              <td class="td-dist-channel">
+                <span class="dist-channel-value">{{ item.VTWEG }}</span>
+              </td>
+              
+              <td class="td-position">
+                <span class="position-value">{{ item.POSNR }}</span>
+              </td>
+              
+              <td class="td-status">
+                <span class="status-badge" [ngClass]="getStatusClass(item.POSNR)">
+                  {{ getStatusText(item.POSNR) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="salesOrderData.length === 0">
+        <i class="empty-icon fas fa-inbox"></i>
+        <h3 class="empty-title">No Sales Order Data</h3>
+        <p class="empty-message">No sales order records found. Check back later for updates.</p>
+      </div>
+    </div>
+  </div>
+</div>

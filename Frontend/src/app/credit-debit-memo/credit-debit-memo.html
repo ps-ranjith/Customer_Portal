@@ -1,0 +1,143 @@
+<div class="credit-debit-memo-container">
+  <div class="credit-debit-memo-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="title-icon fas fa-credit-card"></i>
+        Credit/Debit Memos
+      </h1>
+      <p class="page-subtitle">Track your credit and debit memo transactions</p>
+    </div>
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+      <i *ngIf="!isLoading" class="refresh-icon fas fa-sync-alt"></i>
+      <i *ngIf="isLoading" class="loading-icon fas fa-spinner fa-spin"></i>
+      <span class="refresh-text">{{ isLoading ? 'Loading...' : 'Refresh' }}</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading credit/debit memo data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <i class="error-icon fas fa-exclamation-triangle"></i>
+      <h3 class="error-title">Error</h3>
+      <p class="error-message">{{ error }}</p>
+      <button (click)="refreshData()" class="retry-btn">
+        <i class="retry-icon fas fa-redo"></i>
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Display -->
+  <div *ngIf="showData && !isLoading && !error" class="credit-debit-memo-content">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card animate-fade-in">
+        <i class="card-icon fas fa-file-alt"></i>
+        <div class="card-content">
+          <h3>Total Memos</h3>
+          <p class="card-value">{{ getTotalMemos() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card animate-fade-in" style="animation-delay: 0.1s;">
+        <i class="card-icon fas fa-dollar-sign"></i>
+        <div class="card-content">
+          <h3>Total Amount</h3>
+          <p class="card-value">{{ getTotalAmount() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card credit-card animate-fade-in" style="animation-delay: 0.2s;">
+        <i class="card-icon fas fa-chart-line"></i>
+        <div class="card-content">
+          <h3>Credit Memos</h3>
+          <p class="card-value credit">{{ getCreditAmount() }}</p>
+          <small class="memo-count">{{ getCreditMemos().length }} credit memos</small>
+        </div>
+      </div>
+
+      <div class="summary-card debit-card animate-fade-in" style="animation-delay: 0.3s;">
+        <i class="card-icon fas fa-chart-line-down"></i>
+        <div class="card-content">
+          <h3>Debit Memos</h3>
+          <p class="card-value debit">{{ getDebitAmount() }}</p>
+          <small class="memo-count">{{ getDebitMemos().length }} debit memos</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="data-table-container animate-fade-in" style="animation-delay: 0.4s;">
+      <div class="table-header">
+        <h2 class="table-title">
+          <i class="table-icon fas fa-clipboard-list"></i>
+          Credit/Debit Memo Details
+        </h2>
+        <div class="table-actions">
+          <span class="record-count">{{ creditDebitMemoData.length }} records</span>
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Document #</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Customer ID</th>
+              <th>Amount</th>
+              <th>Currency</th>
+              <th>Material</th>
+              <th>Description</th>
+              <th>Position</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let memo of creditDebitMemoData; let i = index" 
+                class="table-row animate-fade-in"
+                [style.animation-delay]="(0.5 + (i * 0.05)) + 's'">
+              <td class="document-number">{{ memo.VBELN }}</td>
+              <td class="document-date">{{ formatDate(memo.FKDAT) }}</td>
+              <td class="memo-type">
+                <span class="type-badge" [ngClass]="getMemoTypeClass(memo.FKART)">
+                  <i class="type-icon" [class]="getMemoTypeIcon(memo.FKART)"></i>
+                  {{ getMemoTypeText(memo.FKART) }}
+                </span>
+              </td>
+              <td class="customer-id">{{ memo.KUNNR }}</td>
+              <td class="amount">{{ formatCurrency(memo.NETWR, memo.WAERK) }}</td>
+              <td class="currency">{{ memo.WAERK }}</td>
+              <td class="material">{{ memo.MATNR }}</td>
+              <td class="description">{{ memo.ARKTX }}</td>
+              <td class="position">{{ memo.POSNR }}</td>
+              <td class="status">
+                <span class="status-badge" [ngClass]="getMemoTypeClass(memo.FKART)">
+                  <i class="status-icon" [class]="getMemoTypeIcon(memo.FKART)"></i>
+                  {{ getMemoTypeText(memo.FKART) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !error && creditDebitMemoData.length === 0" class="empty-container">
+    <div class="empty-card">
+      <i class="empty-icon fas fa-inbox"></i>
+      <h3 class="empty-title">No Credit/Debit Memo Data</h3>
+      <p class="empty-message">No credit or debit memo data available at the moment.</p>
+      
+    </div>
+  </div>
+</div>

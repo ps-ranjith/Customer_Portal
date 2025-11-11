@@ -1,0 +1,148 @@
+<div class="invoice-data-container">
+  <div class="invoice-data-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="title-icon fas fa-file-invoice"></i>
+        Invoice Data
+      </h1>
+      <p class="page-subtitle">Track your invoice transactions and manage documents</p>
+    </div>
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+      <i *ngIf="!isLoading" class="refresh-icon fas fa-sync-alt"></i>
+      <i *ngIf="isLoading" class="loading-icon fas fa-spinner fa-spin"></i>
+      <span class="refresh-text">{{ isLoading ? 'Loading...' : 'Refresh' }}</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading invoice data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <i class="error-icon fas fa-exclamation-triangle"></i>
+      <h3 class="error-title">Error</h3>
+      <p class="error-message">{{ error }}</p>
+      <button (click)="refreshData()" class="retry-btn">
+        <i class="retry-icon fas fa-redo"></i>
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Display -->
+  <div *ngIf="showData && !isLoading && !error" class="invoice-data-content">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card animate-fade-in">
+        <i class="card-icon fas fa-file-alt"></i>
+        <div class="card-content">
+          <h3>Total Invoices</h3>
+          <p class="card-value">{{ getTotalInvoices() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card animate-fade-in" style="animation-delay: 0.1s;">
+        <i class="card-icon fas fa-dollar-sign"></i>
+        <div class="card-content">
+          <h3>Total Value</h3>
+          <p class="card-value">{{ getTotalValue() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card animate-fade-in" style="animation-delay: 0.2s;">
+        <i class="card-icon fas fa-users"></i>
+        <div class="card-content">
+          <h3>Unique Customers</h3>
+          <p class="card-value">{{ getUniqueCustomers() }}</p>
+          <small class="invoice-count">{{ getUniqueCustomers() }} customers</small>
+        </div>
+      </div>
+
+      <div class="summary-card animate-fade-in" style="animation-delay: 0.3s;">
+        <i class="card-icon fas fa-boxes"></i>
+        <div class="card-content">
+          <h3>Unique Products</h3>
+          <p class="card-value">{{ getUniqueProducts() }}</p>
+          <small class="invoice-count">{{ getUniqueProducts() }} products</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="data-table-container animate-fade-in" style="animation-delay: 0.4s;">
+      <div class="table-header">
+        <h2 class="table-title">
+          <i class="table-icon fas fa-clipboard-list"></i>
+          Invoice Details
+        </h2>
+        <div class="table-actions">
+          <span class="record-count">{{ invoiceData.length }} records</span>
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Date</th>
+              <th>Customer ID</th>
+              <th>Currency</th>
+              <th>Position</th>
+              <th>Material</th>
+              <th>Description</th>
+              <th>Unit</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let invoice of invoiceData; let i = index" 
+                class="table-row animate-fade-in"
+                [style.animation-delay]="(0.5 + (i * 0.05)) + 's'">
+              <td class="invoice-number">{{ invoice.VBELN }}</td>
+              <td class="invoice-date">{{ formatDate(invoice.FKDAT) }}</td>
+              <td class="customer-id">{{ formatCustomerId(invoice.KUNNR) }}</td>
+              <td class="currency">{{ invoice.WAERK }}</td>
+              <td class="position">{{ invoice.POSNR }}</td>
+              <td class="material">{{ formatProductId(invoice.MATNR) }}</td>
+              <td class="description">{{ invoice.ARKTX }}</td>
+              <td class="unit">{{ invoice.VRKME }}</td>
+              <td class="action-buttons">
+                <button class="action-btn preview-btn" 
+                        (click)="previewInvoice(invoice)" 
+                        title="Preview Invoice"
+                        [disabled]="isLoading">
+                  <i *ngIf="!isLoading" class="btn-icon fas fa-eye"></i>
+                  <i *ngIf="isLoading" class="btn-icon loading-icon fas fa-spinner fa-spin"></i>
+                  <span class="btn-text">{{ isLoading ? 'Loading...' : 'Preview' }}</span>
+                </button>
+                <button class="action-btn download-btn" 
+                        (click)="downloadInvoice(invoice)" 
+                        title="Download Invoice"
+                        [disabled]="isLoading">
+                  <i *ngIf="!isLoading" class="btn-icon fas fa-download"></i>
+                  <i *ngIf="isLoading" class="btn-icon loading-icon fas fa-spinner fa-spin"></i>
+                  <span class="btn-text">{{ isLoading ? 'Loading...' : 'Download' }}</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !error && invoiceData.length === 0" class="empty-container">
+    <div class="empty-card">
+      <i class="empty-icon fas fa-inbox"></i>
+      <h3 class="empty-title">No Invoice Data</h3>
+      <p class="empty-message">No invoice data available at the moment.</p>
+      
+    </div>
+  </div>
+</div>

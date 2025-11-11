@@ -1,0 +1,186 @@
+<div class="overall-sales-container">
+  <div class="overall-sales-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="title-icon fas fa-chart-bar"></i>
+        Overall Sales
+      </h1>
+      <p class="page-subtitle">Comprehensive view of your sales performance and analytics</p>
+    </div>
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+      <i *ngIf="!isLoading" class="refresh-icon fas fa-sync-alt"></i>
+      <i *ngIf="isLoading" class="loading-icon fas fa-spinner fa-spin"></i>
+      <span class="refresh-text">{{ isLoading ? 'Loading...' : 'Refresh' }}</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading overall sales data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <i class="error-icon fas fa-exclamation-triangle"></i>
+      <h3 class="error-title">Error</h3>
+      <p class="error-message">{{ error }}</p>
+      <button (click)="refreshData()" class="retry-btn">
+        <i class="retry-icon fas fa-redo"></i>
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Display -->
+  <div *ngIf="showData && !isLoading && !error" class="overall-sales-content">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card animate-fade-in">
+        <i class="card-icon fas fa-clipboard-list"></i>
+        <div class="card-content">
+          <h3>Total Orders</h3>
+          <p class="card-value">{{ getTotalOrders() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card animate-fade-in" style="animation-delay: 0.1s;">
+        <i class="card-icon fas fa-boxes"></i>
+        <div class="card-content">
+          <h3>Total Items</h3>
+          <p class="card-value">{{ getTotalItems() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card revenue-card animate-fade-in" style="animation-delay: 0.2s;">
+        <i class="card-icon fas fa-dollar-sign"></i>
+        <div class="card-content">
+          <h3>Total Revenue</h3>
+          <p class="card-value revenue">{{ getTotalAmount() }}</p>
+        </div>
+      </div>
+
+      <div class="summary-card average-card animate-fade-in" style="animation-delay: 0.3s;">
+        <i class="card-icon fas fa-chart-line"></i>
+        <div class="card-content">
+          <h3>Average Order Value</h3>
+          <p class="card-value average">{{ getAverageOrderValue() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakdown Sections -->
+    <div class="breakdown-sections">
+      <!-- Currency Breakdown -->
+      <div class="breakdown-section animate-fade-in" style="animation-delay: 0.4s;">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="section-icon fas fa-exchange-alt"></i>
+            Revenue by Currency
+          </h2>
+        </div>
+        <div class="breakdown-cards">
+          <div *ngFor="let currency of getCurrencyBreakdown(); let i = index" 
+               class="breakdown-card currency-card animate-fade-in"
+               [style.animation-delay]="(0.5 + (i * 0.1)) + 's'">
+            <i class="breakdown-icon" [class]="getCurrencyIcon(currency.currency)"></i>
+            <div class="breakdown-content">
+              <h4>{{ currency.currency }}</h4>
+              <p class="breakdown-value">{{ formatCurrency(currency.amount.toString(), currency.currency) }}</p>
+              <small class="breakdown-count">{{ currency.count }} transactions</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit Breakdown -->
+      <div class="breakdown-section animate-fade-in" style="animation-delay: 0.6s;">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="section-icon fas fa-ruler"></i>
+            Quantity by Unit
+          </h2>
+        </div>
+        <div class="breakdown-cards">
+          <div *ngFor="let unit of getUnitBreakdown(); let i = index" 
+               class="breakdown-card unit-card animate-fade-in"
+               [style.animation-delay]="(0.7 + (i * 0.1)) + 's'">
+            <i class="breakdown-icon" [class]="getUnitIcon(unit.unit)"></i>
+            <div class="breakdown-content">
+              <h4>{{ unit.unit }}</h4>
+              <p class="breakdown-value">{{ unit.quantity.toLocaleString() }}</p>
+              <small class="breakdown-count">{{ unit.count }} items</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="data-table-container animate-fade-in" style="animation-delay: 0.8s;">
+      <div class="table-header">
+        <h2 class="table-title">
+          <i class="table-icon fas fa-clipboard-list"></i>
+          Sales Details
+        </h2>
+        <div class="table-actions">
+          <span class="record-count">{{ overallSalesData.length }} records</span>
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Date</th>
+              <th>Customer ID</th>
+              <th>Material</th>
+              <th>Position</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Amount</th>
+              <th>Currency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sale of overallSalesData; let i = index" 
+                class="table-row animate-fade-in"
+                [style.animation-delay]="(0.9 + (i * 0.05)) + 's'">
+              <td class="order-number">{{ sale.VBELN }}</td>
+              <td class="order-date">{{ formatDate(sale.FKDAT) }}</td>
+              <td class="customer-id">{{ sale.KUNNR }}</td>
+              <td class="material">{{ sale.MATNR }}</td>
+              <td class="position">{{ sale.POSNR }}</td>
+              <td class="quantity">{{ formatQuantity(sale.FKIMG, sale.VRKME) }}</td>
+              <td class="unit">
+                <span class="unit-badge">
+                  <i class="unit-icon" [class]="getUnitIcon(sale.VRKME)"></i>
+                  {{ sale.VRKME }}
+                </span>
+              </td>
+              <td class="amount">{{ formatCurrency(sale.NETWR, sale.WAERK) }}</td>
+              <td class="currency">
+                <span class="currency-badge">
+                  <i class="currency-icon" [class]="getCurrencyIcon(sale.WAERK)"></i>
+                  {{ sale.WAERK }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !error && overallSalesData.length === 0" class="empty-container">
+    <div class="empty-card">
+      <i class="empty-icon fas fa-inbox"></i>
+      <h3 class="empty-title">No Sales Data</h3>
+      <p class="empty-message">No sales data available at the moment.</p>
+      
+    </div>
+  </div>
+</div>

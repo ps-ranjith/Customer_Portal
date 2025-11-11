@@ -1,0 +1,160 @@
+.customer-dashboard-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.component-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.component-card {
+  background-color: #fff;
+  padding: 2rem;
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.component-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.component-card:hover::before {
+  left: 100%;
+}
+
+.component-card:hover {
+  background-color: #f8fafc;
+  color: #007bff;
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+  transform: translateY(-5px);
+  border-color: #007bff;
+}
+
+.component-card:active {
+  transform: translateY(-2px);
+}
+
+.dark-theme .component-card {
+  background-color: #3c4149;
+  color: #f8f8f2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dark-theme .component-card:hover {
+  background-color: #4a5568;
+  color: #61dafb;
+  box-shadow: 0 8px 25px rgba(97, 218, 251, 0.2);
+  border-color: #61dafb;
+}
+
+.component-card h2 {
+  color: #007bff;
+  margin-bottom: 15px;
+  font-size: 1.5em;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.component-card:hover h2 {
+  color: #0056b3;
+}
+
+.dark-theme .component-card h2 {
+  color: #61dafb;
+}
+
+.dark-theme .component-card:hover h2 {
+  color: #4fc3f7;
+}
+
+p {
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 25px;
+}
+
+li {
+  padding: 8px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.dark-theme li {
+  border-bottom-color: #666;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+strong {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.dark-theme strong {
+  color: #61dafb;
+}
+
+.action-button {
+  background-color: #28a745;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #218838;
+}
+
+.dark-theme .action-button {
+  background-color: #98c379;
+  color: #282c34;
+}
+
+.dark-theme .action-button:hover {
+  background-color: #82b260;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .customer-dashboard-container {
+    padding: 1rem;
+  }
+  
+  .component-container {
+    gap: 1rem;
+  }
+  
+  .component-card {
+    width: 100%;
+    max-width: 350px;
+    padding: 1.5rem;
+  }
+}

@@ -1,0 +1,139 @@
+<div class="user-profile-container" [class]="'state-' + animationState">
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading your profile...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !loading">
+    <div class="error-content">
+      <div class="error-icon">⚠️</div>
+      <h2>Oops! Something went wrong</h2>
+      <p>{{ error }}</p>
+      <button class="retry-button" (click)="retry()">
+        <span class="retry-icon">🔄</span>
+        Try Again
+      </button>
+      <button class="back-button" (click)="goBack()">
+        <span class="back-icon">←</span>
+        Go Back
+      </button>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div class="profile-content" *ngIf="userProfile && !loading">
+    <!-- Header Section -->
+    <div class="profile-header">
+      <button class="back-nav-button" (click)="goBack()">
+        <span class="back-icon">←</span>
+        Back to Dashboard
+      </button>
+      <h1 class="profile-title">User Profile</h1>
+    </div>
+
+    <!-- Main Profile Card -->
+    <div class="profile-card card">
+      <!-- Avatar Section -->
+      <div class="avatar-section">
+        <div class="avatar-container">
+          <div class="avatar-circle">
+            <span class="avatar-initials">{{ getInitials() }}</span>
+          </div>
+        </div>
+        <div class="user-info">
+          <h2 class="user-name">{{ getFullName() }}</h2>
+          <p class="user-id">Customer ID: {{ userProfile.KUNNR }}</p>
+          <p class="user-type">Account Type: {{ userProfile.KTOKD }}</p>
+        </div>
+      </div>
+
+      <!-- Profile Details Grid -->
+      <div class="profile-details">
+        <div class="details-grid">
+          <!-- Contact Information -->
+          <div class="detail-section data-card">
+            <h3 class="section-title">
+              <span class="section-icon">📞</span>
+              Contact Information
+            </h3>
+            <div class="detail-item">
+              <span class="detail-label">Phone:</span>
+              <span class="detail-value">{{ userProfile.TELF1 || 'Not provided' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">{{ userProfile.SMTP_ADDR || 'Not provided' }}</span>
+            </div>
+          </div>
+
+          <!-- Address Information -->
+          <div class="detail-section data-card">
+            <h3 class="section-title">
+              <span class="section-icon">📍</span>
+              Address
+            </h3>
+            <div class="detail-item">
+              <span class="detail-label">Street:</span>
+              <span class="detail-value">{{ userProfile.STRAS || 'Not provided' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">City:</span>
+              <span class="detail-value">{{ userProfile.ORT01 || 'Not provided' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Region:</span>
+              <span class="detail-value">{{ userProfile.REGIO || 'Not provided' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Postal Code:</span>
+              <span class="detail-value">{{ userProfile.PSTLZ || 'Not provided' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Country:</span>
+              <span class="detail-value">{{ userProfile.LAND1 || 'Not provided' }}</span>
+            </div>
+          </div>
+
+          <!-- Business Information -->
+          <div class="detail-section data-card">
+            <h3 class="section-title">
+              <span class="section-icon">🏢</span>
+              Business Details
+            </h3>
+            <div class="detail-item">
+              <span class="detail-label">Sales Organization:</span>
+              <span class="detail-value">{{ userProfile.VKORG || 'Not provided' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Distribution Channel:</span>
+              <span class="detail-value">{{ userProfile.VTWEG || 'Not provided' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Division:</span>
+              <span class="detail-value">{{ userProfile.SPART || 'Not provided' }}</span>
+            </div>
+          </div>
+
+          <!-- Tax Information -->
+          <div class="detail-section data-card">
+            <h3 class="section-title">
+              <span class="section-icon">📋</span>
+              Tax Information
+            </h3>
+            <div class="detail-item">
+              <span class="detail-label">Tax ID:</span>
+              <span class="detail-value">{{ userProfile.STCD1 || 'Not provided' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      
+    </div>
+  </div>
+</div>

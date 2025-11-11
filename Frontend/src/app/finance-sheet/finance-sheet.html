@@ -1,0 +1,27 @@
+<div class="finance-sheet-container">
+  <div class="finance-sheet-content">
+    <h1 class="finance-sheet-title">Customer Financial Sheet</h1>
+    
+    <div class="finance-cards-grid">
+      <div class="finance-card" (click)="navigateToInvoiceData()">
+        <div class="card-icon">📄</div>
+        <div class="card-title">Invoice Data</div>
+      </div>
+      
+      <div class="finance-card" (click)="navigateToPaymentAging()">
+        <div class="card-icon">⏰</div>
+        <div class="card-title">Payment Aging</div>
+      </div>
+      
+      <div class="finance-card" (click)="navigateToCreditDebitMemo()">
+        <div class="card-icon">💳</div>
+        <div class="card-title">Credit Debit Memo</div>
+      </div>
+      
+      <div class="finance-card" (click)="navigateToOverallSales()">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Overall Sales</div>
+      </div>
+    </div>
+  </div>
+</div> 

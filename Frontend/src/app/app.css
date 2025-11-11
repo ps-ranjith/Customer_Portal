@@ -1,0 +1,91 @@
+/* Global styles for the app */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  line-height: 1.6;
+  margin-top: 80px; /* Account for fixed navbar */
+  transition: all 0.3s ease;
+}
+
+/* Dark theme styles */
+.dark-theme {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+/* Ensure router outlet has proper spacing */
+router-outlet {
+  display: block;
+  margin-top: 0;
+}
+
+/* Hide navbar on login page */
+.login-page app-navbar {
+  display: none;
+}
+
+/* Ensure all components have proper spacing and don't get overridden by navbar */
+.inquiry-container,
+.sales-order-container,
+.dashboard-container,
+.customer-dashboard-container,
+.finance-sheet-container,
+.list-of-delivery-container,
+.payment-aging-container,
+.credit-debit-memo-container,
+.overall-sales-container,
+.invoice-data-container {
+  margin-top: 20px; /* Add top margin to prevent navbar override */
+  padding-top: 2rem;
+  min-height: calc(100vh - 100px); /* Account for navbar height + margin */
+  position: relative;
+  z-index: 1; /* Ensure content is below navbar */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    margin-top: 70px;
+  }
+  
+  .inquiry-container,
+  .sales-order-container,
+  .dashboard-container,
+  .customer-dashboard-container,
+  .finance-sheet-container,
+  .list-of-delivery-container,
+  .payment-aging-container,
+  .credit-debit-memo-container,
+  .overall-sales-container,
+  .invoice-data-container {
+    margin-top: 15px;
+    min-height: calc(100vh - 85px);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    margin-top: 60px;
+  }
+  
+  .inquiry-container,
+  .sales-order-container,
+  .dashboard-container,
+  .customer-dashboard-container,
+  .finance-sheet-container,
+  .list-of-delivery-container,
+  .payment-aging-container,
+  .credit-debit-memo-container,
+  .overall-sales-container,
+  .invoice-data-container {
+    margin-top: 10px;
+    min-height: calc(100vh - 70px);
+  }
+}

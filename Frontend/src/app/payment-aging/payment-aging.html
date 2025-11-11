@@ -1,0 +1,139 @@
+<div class="payment-aging-container">
+  <div class="payment-aging-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="title-icon fas fa-clock"></i>
+        Payment Aging
+      </h1>
+      <p class="page-subtitle">Track your payment aging and overdue invoices</p>
+    </div>
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+      <i *ngIf="!isLoading" class="refresh-icon fas fa-sync-alt"></i>
+      <i *ngIf="isLoading" class="loading-icon fas fa-spinner fa-spin"></i>
+      <span class="refresh-text">{{ isLoading ? 'Loading...' : 'Refresh' }}</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading payment aging data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <i class="error-icon fas fa-exclamation-triangle"></i>
+      <h3 class="error-title">Error</h3>
+      <p class="error-message">{{ error }}</p>
+      <button (click)="refreshData()" class="retry-btn">
+        <i class="retry-icon fas fa-redo"></i>
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Display -->
+  <div *ngIf="showData && !isLoading && !error" class="payment-aging-content">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card animate-fade-in">
+        <i class="card-icon fas fa-file-alt"></i>
+        <div class="card-content">
+          <h3>Total Invoices</h3>
+          <p class="card-value">{{ getTotalInvoices() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card animate-fade-in" style="animation-delay: 0.1s;">
+        <i class="card-icon fas fa-dollar-sign"></i>
+        <div class="card-content">
+          <h3>Total Amount</h3>
+          <p class="card-value">{{ getTotalAmount() }}</p>
+        </div>
+      </div>
+      
+      <div class="summary-card animate-fade-in" style="animation-delay: 0.2s;">
+        <i class="card-icon fas fa-chart-bar"></i>
+        <div class="card-content">
+          <h3>Average Amount</h3>
+          <p class="card-value">{{ getAverageAmount() }}</p>
+        </div>
+      </div>
+
+      <div class="summary-card overdue-card animate-fade-in" style="animation-delay: 0.3s;">
+        <i class="card-icon fas fa-exclamation-triangle"></i>
+        <div class="card-content">
+          <h3>Overdue Amount</h3>
+          <p class="card-value overdue">{{ getOverdueAmount() }}</p>
+          <small class="overdue-count">{{ getOverdueCount() }} invoices overdue</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="data-table-container animate-fade-in" style="animation-delay: 0.4s;">
+      <div class="table-header">
+        <h2 class="table-title">
+          <i class="table-icon fas fa-clipboard-list"></i>
+          Payment Aging Details
+        </h2>
+        <div class="table-actions">
+          <span class="record-count">{{ paymentAgingData.length }} records</span>
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Invoice Date</th>
+              <th>Customer ID</th>
+              <th>Amount</th>
+              <th>Currency</th>
+              <th>Payment Terms</th>
+              <th>Due Date</th>
+              <th>Aging Days</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let payment of paymentAgingData; let i = index" 
+                class="table-row animate-fade-in"
+                [style.animation-delay]="(0.5 + (i * 0.05)) + 's'">
+              <td class="invoice-number">{{ payment.VBELN }}</td>
+              <td class="invoice-date">{{ formatDate(payment.FKDAT) }}</td>
+              <td class="customer-id">{{ payment.KUNNR }}</td>
+              <td class="amount">{{ formatCurrency(payment.NETWR, payment.WAERK) }}</td>
+              <td class="currency">{{ payment.WAERK }}</td>
+              <td class="payment-terms">{{ payment.ZTERM }}</td>
+              <td class="due-date">{{ formatDate(payment.DUE_DATE) }}</td>
+              <td class="aging-days">
+                <span class="aging-value" [ngClass]="getAgingClass(payment.AGING_DAYS)">
+                  {{ payment.AGING_DAYS }} days
+                </span>
+              </td>
+              <td class="status">
+                <span class="status-badge" [ngClass]="getAgingClass(payment.AGING_DAYS)">
+                  <i class="status-icon" [class]="getAgingIcon(payment.AGING_DAYS)"></i>
+                  {{ getAgingStatus(payment.AGING_DAYS) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !error && paymentAgingData.length === 0" class="empty-container">
+    <div class="empty-card">
+      <i class="empty-icon fas fa-inbox"></i>
+      <h3 class="empty-title">No Payment Aging Data</h3>
+      <p class="empty-message">No payment aging data available at the moment.</p>
+      
+    </div>
+  </div>
+</div>

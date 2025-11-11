@@ -1,0 +1,9 @@
+<div [class.dark-theme]="isDarkTheme" class="app-container">
+  <app-navbar (toggleTheme)="onToggleTheme()" (profileClick)="onProfileClick()"></app-navbar>
+
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+
+  <app-user-profile *ngIf="showUserProfile" class="user-profile-overlay" (close)="onProfileClose()"></app-user-profile>
+</div>
